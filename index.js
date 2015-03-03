@@ -6,7 +6,7 @@ var path = require('path'),
 	loginExtSettings,
 	appenvironment,
 	settingJSON,
-  activate_middleware,
+  // activate_middleware,
 	Extensions = require('periodicjs.core.extensions'),
 	CoreExtension = new Extensions({
 		extensionFilePath: path.resolve(process.cwd(), './content/config/extensions.json')
@@ -73,11 +73,11 @@ module.exports = function (periodic) {
 	authRouter.get('/reset/:token', tokenController.get_token, tokenController.reset);
 	authRouter.post('/reset/:token', tokenController.get_token, tokenController.token);
 
-  activate_middleware = [tokenController.get_activation_token,authController.ensureAuthenticated]
+  // activate_middleware = [tokenController.get_user_activation_token,authController.ensureAuthenticated];
 
   // if they have token then render page otherwise
-  userRouter.get('/auth/user/activation/:token',activate_middleware,authController.get_activation);
-  userRouter.post('/auth/user/activation',activate_middleware,authController.activate_user);
+  userRouter.get('/activate/', tokenController.create_user_activation_token,authController.get_activation);
+  userRouter.post('/activate',authController.activate_user);
 
 	//social controller & router
 	authRouter.get('/facebook', socialPassportController.facebook);
@@ -90,7 +90,7 @@ module.exports = function (periodic) {
 	userRouter.get('/new|/register', userController.newuser);
 	userRouter.get('/finishregistration', userController.finishregistration);
 
-	userRouter.post('/new', tokenController.create_validation_token, userController.create);
+	userRouter.post('/new', tokenController.create_user_activation_token, userController.create);
 	userRouter.post('/finishregistration', userController.updateuserregistration);
 
 	periodic.app.use(authController.rememberme);
